@@ -1,0 +1,52 @@
+<div class="hotel-list-container">
+  <div class="hero-section">
+    <h1>Découvrez nos Hôtels de Prestige</h1>
+    <p>Trouvez la chambre idéale et réservez en temps réel via notre système interactif DDD.</p>
+
+    <div class="search-bar">
+      <input type="text"
+             [(ngModel)]="searchTerm"
+             (input)="filtrer()"
+             placeholder="Rechercher par nom d'hôtel ou par ville..." />
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Chargement des hôtels...</p>
+  </div>
+
+  <div *ngIf="errorMessage" class="error-message">
+    {{ errorMessage }}
+  </div>
+
+  <div class="hotels-grid" *ngIf="!loading && filteredHotels.length > 0">
+    <div class="hotel-card" *ngFor="let hotel of filteredHotels">
+      <div class="card-badge">{{ hotel.ville }}</div>
+      <div class="card-image">
+        <img [src]="hotel.images && hotel.images.length > 0 ? hotel.images[0] : 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=600&q=80'" [alt]="hotel.nom" />
+      </div>
+      <div class="card-content">
+        <div class="stars">
+          <span *ngFor="let star of getEtoilesArray(hotel.nbEtoiles)">★</span>
+        </div>
+        <h2>{{ hotel.nom }}</h2>
+        <p class="description">{{ hotel.description }}</p>
+        <p class="address"><i class="bi bi-geo-alt"></i> {{ hotel.adresse }}</p>
+
+        <div class="card-footer">
+          <span class="rooms-badge">
+            {{ hotel.nbChambresDisponibles }} chambre(s) libre(s)
+          </span>
+          <a [routerLink]="['/hotels', hotel.id]" class="btn-detail">
+            Voir Disponibilités →
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="!loading && filteredHotels.length === 0" class="empty-state">
+    <p>Aucun hôtel trouvé correspondant à votre recherche.</p>
+  </div>
+</div>

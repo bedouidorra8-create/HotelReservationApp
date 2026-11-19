@@ -1,0 +1,38 @@
+<div class="hotel-detail-container" *ngIf="hotel">
+  <a routerLink="/hotels" class="btn-back">← Retour aux Hôtels</a>
+
+  <div class="hotel-header-card">
+    <div class="hotel-info">
+      <h1>{{ hotel.nom }}</h1>
+      <p class="address"><i class="bi bi-geo-alt"></i> {{ hotel.adresse }}, {{ hotel.ville }}</p>
+      <p class="description">{{ hotel.description }}</p>
+      <div class="contacts">
+        <span><i class="bi bi-telephone"></i> {{ hotel.telephone }}</span>
+        <span><i class="bi bi-envelope"></i> {{ hotel.email }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Interactive Room Availability Calendar -->
+  <app-chambre-calendar
+    [hotelId]="hotel.id"
+    (cellSelected)="onCellSelected($event)">
+  </app-chambre-calendar>
+
+  <!-- Avis section -->
+  <app-avis-list [hotelId]="hotel.id"></app-avis-list>
+
+  <!-- Reservation Modal Popup when cell is clicked -->
+  <div class="modal-backdrop" *ngIf="showReservationModal">
+    <div class="modal-content">
+      <button class="modal-close" (click)="fermerModal()">✕</button>
+      <h2>Réserver une Chambre</h2>
+      <app-reservation-form
+        [prefilledChambreId]="selectedChambreId"
+        [prefilledDateArrivee]="selectedDateArrivee"
+        [prefilledDateDepart]="selectedDateDepart"
+        (reservationCreated)="fermerModal()">
+      </app-reservation-form>
+    </div>
+  </div>
+</div>

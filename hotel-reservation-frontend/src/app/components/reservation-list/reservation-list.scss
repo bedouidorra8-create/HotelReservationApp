@@ -1,0 +1,83 @@
+.res-list-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+
+  h2 {
+    font-size: 1.8rem;
+    color: #38bdf8;
+    margin-bottom: 1.5rem;
+  }
+
+  .table-card {
+    background: rgba(30, 41, 59, 0.8);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    overflow-x: auto;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+
+    .res-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+
+      th, td {
+        padding: 1rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      }
+
+      th {
+        background: #0f172a;
+        color: #94a3b8;
+        font-weight: 600;
+        font-size: 0.9rem;
+      }
+
+      td {
+        color: #f8fafc;
+        font-size: 0.95rem;
+      }
+
+      .id-cell {
+        font-family: monospace;
+        color: #94a3b8;
+      }
+
+      .status-badge {
+        padding: 0.35rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+
+        &.badge-attente { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
+        &.badge-confirmee { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+        &.badge-annulee { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+        &.badge-terminee { background: rgba(148, 163, 184, 0.2); color: #94a3b8; }
+      }
+
+      .actions-cell {
+        display: flex;
+        gap: 0.5rem;
+
+        .btn-action {
+          border: none;
+          padding: 0.4rem 0.8rem;
+          border-radius: 6px;
+          font-size: 0.8rem;
+          font-weight: 600;
+          cursor: pointer;
+
+          &.btn-confirm { background: #10b981; color: #fff; }
+          &.btn-cancel { background: #ef4444; color: #fff; }
+        }
+      }
+    }
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 3rem;
+    color: #94a3b8;
+  }
+}

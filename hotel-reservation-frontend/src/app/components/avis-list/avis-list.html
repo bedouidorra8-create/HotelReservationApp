@@ -1,0 +1,19 @@
+<div class="avis-section">
+  <h3>Avis des Clients</h3>
+
+  <div *ngIf="loading" class="loading">Chargement des avis...</div>
+
+  <div class="avis-grid" *ngIf="!loading && avisList.length > 0">
+    <div class="avis-card" *ngFor="let a of avisList">
+      <div class="stars">
+        <span *ngFor="let s of getStarsArray(a.note)">★</span>
+      </div>
+      <p class="commentaire">"{{ a.commentaire }}"</p>
+      <span class="date">{{ a.date | date:'dd/MM/yyyy' }}</span>
+    </div>
+  </div>
+
+  <div *ngIf="!loading && avisList.length === 0" class="no-avis">
+    Aucun avis rédigé pour cet hôtel pour l'instant.
+  </div>
+</div>

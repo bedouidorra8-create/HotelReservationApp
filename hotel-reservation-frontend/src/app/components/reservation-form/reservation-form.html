@@ -1,0 +1,28 @@
+<form (ngSubmit)="soumettre()" class="res-form">
+  <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+  <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
+
+  <div class="form-group">
+    <label>ID Chambre</label>
+    <input type="text" [(ngModel)]="chambreId" name="chambreId" required readonly class="form-input readonly-input" />
+  </div>
+
+  <div class="form-group">
+    <label>Date d'Arrivée</label>
+    <input type="date" [(ngModel)]="dateArrivee" name="dateArrivee" required class="form-input" />
+  </div>
+
+  <div class="form-group">
+    <label>Date de Départ</label>
+    <input type="date" [(ngModel)]="dateDepart" name="dateDepart" required class="form-input" />
+  </div>
+
+  <div class="form-group">
+    <label>Nombre de Personnes</label>
+    <input type="number" [(ngModel)]="nbPersonnes" name="nbPersonnes" min="1" max="10" required class="form-input" />
+  </div>
+
+  <button type="submit" [disabled]="loading" class="btn-submit">
+    {{ loading ? 'Réservation en cours...' : 'Confirmer la Réservation' }}
+  </button>
+</form>

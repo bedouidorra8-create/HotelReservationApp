@@ -1,0 +1,279 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "HotelReservation API",
+    "description": "API RESTful du Système de Gestion des Réservations Hôtelières avec Architecture DDD et Clean Architecture.",
+    "version": "v1"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:5000",
+      "description": "Serveur de développement local"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "Bearer": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Authentification JWT Bearer Token"
+      }
+    },
+    "schemas": {
+      "InscrireUtilisateurRequest": {
+        "type": "object",
+        "required": ["nom", "prenom", "email", "motDePasse"],
+        "properties": {
+          "nom": { "type": "string" },
+          "prenom": { "type": "string" },
+          "email": { "type": "string", "format": "email" },
+          "motDePasse": { "type": "string" },
+          "telephone": { "type": "string" },
+          "dateNaissance": { "type": "string", "format": "date-time" },
+          "sexe": { "type": "integer", "enum": [1, 2] },
+          "adresse": { "type": "string" }
+        }
+      },
+      "ConnexionRequest": {
+        "type": "object",
+        "required": ["email", "motDePasse"],
+        "properties": {
+          "email": { "type": "string", "format": "email" },
+          "motDePasse": { "type": "string" }
+        }
+      },
+      "ConnexionResponse": {
+        "type": "object",
+        "properties": {
+          "token": { "type": "string" },
+          "refreshToken": { "type": "string" },
+          "utilisateur": { "$ref": "#/components/schemas/UtilisateurDto" }
+        }
+      },
+      "HotelDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "nom": { "type": "string" },
+          "ville": { "type": "string" },
+          "adresse": { "type": "string" },
+          "nbEtoiles": { "type": "integer" },
+          "description": { "type": "string" },
+          "telephone": { "type": "string" },
+          "email": { "type": "string" },
+          "images": { "type": "array", "items": { "type": "string" } },
+          "actif": { "type": "boolean" },
+          "chambres": { "type": "array", "items": { "$ref": "#/components/schemas/ChambreDto" } },
+          "prixMinParNuit": { "type": "number", "format": "decimal", "nullable": true },
+          "noteMoyenne": { "type": "number", "nullable": true },
+          "nbAvis": { "type": "integer", "nullable": true }
+        }
+      },
+      "ChambreDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "hotelId": { "type": "string", "format": "uuid" },
+          "numero": { "type": "string" },
+          "type": { "type": "integer", "enum": [1, 2, 3, 4] },
+          "etage": { "type": "integer" },
+          "prixMontant": { "type": "number", "format": "decimal" },
+          "prixDevise": { "type": "string" },
+          "actif": { "type": "boolean" },
+          "statut": { "type": "integer", "enum": [1, 2, 3] }
+        }
+      },
+      "ReservationDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "chambreId": { "type": "string", "format": "uuid" },
+          "clientId": { "type": "string", "format": "uuid" },
+          "hotelId": { "type": "string", "format": "uuid" },
+          "dateArrivee": { "type": "string", "format": "date-time" },
+          "dateDepart": { "type": "string", "format": "date-time" },
+          "nbNuits": { "type": "integer" },
+          "nbPersonnes": { "type": "integer" },
+          "prixUnitaireMontant": { "type": "number", "format": "decimal" },
+          "prixUnitaireDevise": { "type": "string" },
+          "totalMontant": { "type": "number", "format": "decimal" },
+          "totalDevise": { "type": "string" },
+          "statut": { "type": "integer", "enum": [1, 2, 3, 4] },
+          "dateCreation": { "type": "string", "format": "date-time" }
+        }
+      },
+      "PaiementDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "reservationId": { "type": "string", "format": "uuid" },
+          "montant": { "type": "number", "format": "decimal" },
+          "devise": { "type": "string" },
+          "date": { "type": "string", "format": "date-time" },
+          "modePaiement": { "type": "integer", "enum": [1, 2, 3, 4] },
+          "reference": { "type": "string" },
+          "statut": { "type": "integer", "enum": [1, 2, 3, 4, 5] },
+          "enregistrePar": { "type": "string", "format": "uuid", "nullable": true }
+        }
+      },
+      "FactureDto": {
+        "type": "object",
+        "properties": {
+          "reservationId": { "type": "string", "format": "uuid" },
+          "dateEmission": { "type": "string", "format": "date-time" },
+          "total": { "type": "number", "format": "decimal" },
+          "devise": { "type": "string" },
+          "paiements": { "type": "array", "items": { "$ref": "#/components/schemas/PaiementDto" } }
+        }
+      },
+      "AvisDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "clientId": { "type": "string", "format": "uuid" },
+          "hotelId": { "type": "string", "format": "uuid" },
+          "reservationId": { "type": "string", "format": "uuid" },
+          "note": { "type": "integer", "minimum": 1, "maximum": 5 },
+          "commentaire": { "type": "string" },
+          "date": { "type": "string", "format": "date-time" },
+          "statut": { "type": "integer", "enum": [1, 2, 3] }
+        }
+      },
+      "UtilisateurDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "nom": { "type": "string" },
+          "prenom": { "type": "string" },
+          "email": { "type": "string" },
+          "telephone": { "type": "string" },
+          "role": { "type": "string" },
+          "statut": { "type": "integer" },
+          "dateCreation": { "type": "string", "format": "date-time" }
+        }
+      },
+      "RoleDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "nom": { "type": "string" },
+          "description": { "type": "string" },
+          "permissions": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/api/auth/connexion": {
+      "post": {
+        "summary": "Authentification utilisateur",
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ConnexionRequest" } } }
+        },
+        "responses": {
+          "200": { "description": "Connexion réussie", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ConnexionResponse" } } } },
+          "401": { "description": "Identifiants invalides" }
+        }
+      }
+    },
+    "/api/hotels": {
+      "get": {
+        "summary": "Consulter tous les hôtels",
+        "responses": {
+          "200": { "description": "Liste des hôtels", "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/HotelDto" } } } } }
+        }
+      }
+    },
+    "/api/hotels/{id}": {
+      "get": {
+        "summary": "Consulter un hôtel par ID",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": { "description": "Détail de l'hôtel", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HotelDto" } } } },
+          "404": { "description": "Hôtel introuvable" }
+        }
+      }
+    },
+    "/api/hotels/recherche": {
+      "get": {
+        "summary": "Rechercher des hôtels avec critères",
+        "parameters": [
+          { "name": "ville", "in": "query", "schema": { "type": "string" } },
+          { "name": "prixMin", "in": "query", "schema": { "type": "number" } },
+          { "name": "prixMax", "in": "query", "schema": { "type": "number" } },
+          { "name": "etoilesMin", "in": "query", "schema": { "type": "integer" } },
+          { "name": "tri", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Résultats de recherche avec notes et prix" }
+        }
+      }
+    },
+    "/api/paiements": {
+      "get": {
+        "summary": "Liste globale des paiements (Admin, Agent)",
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": { "description": "Liste des paiements", "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/PaiementDto" } } } } }
+        }
+      }
+    },
+    "/api/paiements/{reservationId}/facture/pdf": {
+      "get": {
+        "summary": "Télécharger la facture officielle en PDF (QuestPDF)",
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          { "name": "reservationId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Fichier PDF de la facture",
+            "content": { "application/pdf": { "schema": { "type": "string", "format": "binary" } } }
+          },
+          "403": { "description": "Accès interdit (règle IDOR)" },
+          "404": { "description": "Réservation introuvable" }
+        }
+      }
+    },
+    "/api/avis/hotel/{hotelId}": {
+      "get": {
+        "summary": "Avis validés d'un hôtel",
+        "parameters": [
+          { "name": "hotelId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": { "description": "Liste des avis validés", "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/AvisDto" } } } } }
+        }
+      }
+    },
+    "/api/administration/utilisateurs/{id}": {
+      "get": {
+        "summary": "Consulter un utilisateur par ID (Admin)",
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": { "description": "Fiche détaillée utilisateur", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/UtilisateurDto" } } } },
+          "404": { "description": "Utilisateur introuvable" }
+        }
+      }
+    },
+    "/api/administration/roles/{id}": {
+      "get": {
+        "summary": "Consulter un rôle et ses permissions (Admin)",
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": { "description": "Détail du rôle", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/RoleDto" } } } }
+        }
+      }
+    }
+  }
+}

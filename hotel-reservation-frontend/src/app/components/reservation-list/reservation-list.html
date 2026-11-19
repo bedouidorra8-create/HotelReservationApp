@@ -1,0 +1,46 @@
+<div class="res-list-container">
+  <h2>Gestion de toutes les Réservations</h2>
+
+  <div *ngIf="loading" class="loading">Chargement des réservations...</div>
+  <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+
+  <div class="table-card" *ngIf="!loading && reservations.length > 0">
+    <table class="res-table">
+      <thead>
+        <tr>
+          <th>ID Réservation</th>
+          <th>Chambre</th>
+          <th>Arrivée</th>
+          <th>Départ</th>
+          <th>Nuits</th>
+          <th>Personnes</th>
+          <th>Statut</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let res of reservations">
+          <td class="id-cell">{{ res.id.substring(0, 8) }}...</td>
+          <td>{{ res.chambreId.substring(0, 8) }}...</td>
+          <td>{{ res.dateArrivee | date:'dd/MM/yyyy' }}</td>
+          <td>{{ res.dateDepart | date:'dd/MM/yyyy' }}</td>
+          <td>{{ res.nbNuits }} nuit(s)</td>
+          <td>{{ res.nbPersonnes }} pers.</td>
+          <td>
+            <span class="status-badge" [ngClass]="getStatutClass(res.statut)">
+              {{ getStatutLabel(res.statut) }}
+            </span>
+          </td>
+          <td class="actions-cell">
+            <button *ngIf="res.statut === 1" class="btn-action btn-confirm" (click)="confirmer(res.id)">Confirmer</button>
+            <button *ngIf="res.statut !== 3" class="btn-action btn-cancel" (click)="annuler(res.id)">Annuler</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div *ngIf="!loading && reservations.length === 0" class="empty-state">
+    Aucune réservation enregistrée pour le moment.
+  </div>
+</div>
